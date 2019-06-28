@@ -26,4 +26,14 @@ class Log < ApplicationRecord
         ORDER BY rental_month, rental_year
       "])
   end 
+
+  def self.rental_search(column, name)
+    find_by_sql(["
+      SELECT logs.id,  logs.created_at::date AS formatted_date, books.title, customers.name 
+      FROM logs 
+      INNER JOIN books ON books.id = logs.book_id 
+      INNER JOIN customers ON customers.id = logs.customer_id
+      WHERE LOWER(#{column}) LIKE LOWER(?) 
+      ", "%#{name}%"])
+  end 
 end
